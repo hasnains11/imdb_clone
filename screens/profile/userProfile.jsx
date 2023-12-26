@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { colors } from "../../assets/colors";
 import { useAuthContext } from "../../auth/context";
 
-const ProfileScreen = () => {
+const ProfileScreen = ({user}) => {
     const {logout}=useAuthContext();
   return (
     <View style={styles.container}>
@@ -25,21 +25,19 @@ const ProfileScreen = () => {
           source={ "https://unsplash.com/photos/a-tunnel-with-a-clock-on-the-side-of-it-1HRshxtR4Ok"}
           style={styles.avatar}
         />
-        <Text style={styles.username}>Daud Waleed</Text>
+        <Text style={styles.username}>{user.name}</Text>
       </View>
 
       {/* User Details */}
       <View style={styles.detailsContainer}>
-        <Text style={styles.detailsText}>Email: Daud@gmail.com</Text>
-        <Text style={styles.detailsText}>Location: Rawalpindi, Pakistan</Text>
+        <Text style={styles.detailsText}>Email: {user.email}</Text>
+        <Text style={styles.detailsText}>Nationality: {user.nationality}</Text>
         {/* Add more user details as needed */}
       </View>
 
       {/* User Actions */}
       <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.actionButtonText}>Edit Profile</Text>
-        </TouchableOpacity>
+       
         <TouchableOpacity
           style={{ ...styles.actionButton, backgroundColor: "red" }} onPress={()=>logout()}
         >

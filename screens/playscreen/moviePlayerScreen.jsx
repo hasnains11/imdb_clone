@@ -1,23 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { Video } from "expo-av";
 import { colors } from "../../assets/colors";
+import { getVideoDownloadLink } from "../../contexts/api";
+import NowPlayingSection from "./nowPlaying";
+import WelcomeScreen from "./welcome";
 
 const MoviePlayerScreen = ({ route }) => {
-  const [videoIsReady, setVideoIsReady] = useState(false);
-  console.log(route);
+  const [videoIsReady,setVideoIsReady]=useState(false);
+  console.log("route", route);
+  const movie = route?.params?.movie;
   // Sample video source
-  const videoSource = require("./../../assets/videos/mv.mp4");
+  if(!movie) return <WelcomeScreen/>
+  const videoSource = movie
+    ? { uri: getVideoDownloadLink(movie.videoURL) }
+    : require("../../assets/videos/mv.mp4");
+ 
+ 
   return (
-    <Video
-      source={videoSource}
-      useNativeControls
-      resizeMode="contain"
-      onReadyForDisplay={() => setVideoIsReady(true)}
-      style={styles.videoPlayer}
-    />
+    <View style={{ backgroundColor: colors.black ,flex:1}}>
+      <Video
+        source={videoSource}
+        useNativeControls
+        resizeMode="contain"
+        shouldPlay={false}
+        rate={1.0}
+        volume={1.0}
+        isMuted={false}
+        onReadyForDisplay={() => setVideoIsReady(true)}
+        style={styles.videoPlayer}
+      />
+      <NowPlayingSection movie={movie} />
+    </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -28,7 +45,7 @@ const styles = StyleSheet.create({
   videoPlayer: {
     // flex: 1,
     // height:400,
-    height: "40%",
+    height: "35%",
     top: 0,
     left: 0,
 

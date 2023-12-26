@@ -1,6 +1,6 @@
 import client from '../../api/client';
 
-export const login = (email, password) =>
+export const loginApiReq = (email, password) =>
     client.post('login', { email, password });
 
  

@@ -5,10 +5,7 @@ import { View } from 'react-native'
 import { colors } from '../../assets/colors'
 const MoviePlayer = ({route}) => {
   return (
-    <View style={{backgroundColor:colors.black}}> 
         <MoviePlayerScreen route={route}/>
-        <NowPlayingSection/>
-    </View>
   )
 }
 

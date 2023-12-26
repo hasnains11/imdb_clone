@@ -7,22 +7,25 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import { colors } from "../../assets/colors";
 import { useAuthContext } from "../../auth/context";
 import { useNavigation } from "@react-navigation/native";
+import { loginApiReq } from "./api";
 
 const isEmailValid = (email) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 // Functional component for the IMDb login screen
-const LoginScreen = ({setUser}) => {
+const LoginScreen = () => {
   // State to store the user input for email and password
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const navigator = useNavigation();
-  const {login}  = useAuthContext();
+  const { login } = useAuthContext();
+  const [loading, setLoading] = useState(false); 
   // Function to handle the login button press
   const handleLogin = async () => {
     // Perform authentication logic here
@@ -41,23 +44,51 @@ const LoginScreen = ({setUser}) => {
       setError("Password must be at least 8 characters long");
       return;
     }
-    // login(email,password);
-    // const result = await login(email, password);
-    // console.log(result);
-    //   if (!result.ok) {
-    //       setError(result.data);
-    //       return;
-    //   }
-    setError(null);
-    // login(result.data);
-    await login({email:email,password:password});
-       
+    if(loading) return;
+    // // login(result.data);
+    // const result = await loginApiReq(email, password);
+    // console.log("apiRequestResule", result);
+    // if (!result.ok) {
+    //   setError(result.data);
+    //   return;
+    // } else if (result.ok && result.data == "User not found!") {
+      
+    //   setError("Invalid email or password");
+    //   console.log("user not found",error);
+    // } else {
+    //   console.log("user found");
+    //   const user= result.data;
+    //   login({ email, password,...user});
+    //   setError(null);
+    // }
+    setLoading(true); // Set loading to true when starting API request
+
+    try {
+      const result = await loginApiReq(email, password);
+
+      if (!result.ok) {
+        setError(result.data);
+      } else if (result.ok && result.data === "User not found!") {
+        setError("Invalid email or password");
+      } else {
+        const user = result.data;
+        login({ email, password, ...user });
+        setError(null);
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      setError("An error occurred during login.");
+    } finally {
+      setLoading(false); // Set loading to false when API request is complete
+    }
     // Clear any previous errors
-    setError(null);
   };
 
   return (
     <View style={styles.container}>
+      <ScrollView style={{width:"100%"}}>
+          <View style={{alignItems:"center"}}>
+
       {/* IMDb logo or banner */}
       <Image
         style={styles.logoImage}
@@ -83,13 +114,16 @@ const LoginScreen = ({setUser}) => {
         onChangeText={(text) => setPassword(text)}
       />
       {error && <Text style={styles.errorText}>{error}</Text>}
+     
       {/* Login button */}
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+        <Text style={styles.buttonText}>{loading? <ActivityIndicator size="large" color={colors.white} />:"Login"}</Text>
       </TouchableOpacity>
 
       {/* Forgot password link */}
       <Text style={styles.forgotPassword}>Forgot Password?</Text>
+  </View>
+</ScrollView>
     </View>
   );
 };

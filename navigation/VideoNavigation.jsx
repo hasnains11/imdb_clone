@@ -7,6 +7,7 @@ const Stack = createStackNavigator();
 const VideoNavigation = () => {
   return (
     <Stack.Navigator
+    initialRouteName='VideoPlayer'
       screenOptions={{
         headerShown: false,
       }}

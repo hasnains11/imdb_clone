@@ -7,50 +7,29 @@ import { useNavigation } from "@react-navigation/native";
 import { useMovieContext } from "../../../contexts/moviescontext";
 import { getImagesDownloadLink } from './../../../contexts/api';
 
-const FanFavouritesSection = () => {
+const ComingSoonSection = () => {
   const movieContext = useMovieContext();
-  const featured=[...movieContext.featuredMovies];
-
   const navigator = useNavigation();
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.heading}>Fan Favourites</Text>
-          <Text style={styles.description}>
-            Checkout what fans are loving right now
-          </Text>
-        </View>
-        <Button mode="text" textColor="dodgerblue" style={styles.seeAllButton}
-         onPress={()=>navigator.navigate("MovieViewScreen",{movies:featured,screenTitle:"Fan Favourites"})}>
-          SEE ALL
-        </Button>
-      </View>
-
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {featured.reverse().map((movie) => MovieCard(movie))}
-      </ScrollView>
-    </View>
-  );
-
+  const comingSoonData = [...movieContext.comingSoonMovies];
+ 
   function MovieCard(movie) {
-   
-    const year = movie.releaseDate.split("/")[2];
     let ratings=0;
     if (movie.rates.length !== 0) {
       ratings =
         movie.rates.map((r) => r.rate).reduce((a, b) => a + b, 0) /
         movie.rates.length;
     } 
+    const year = movie.releaseDate.split("/")[2];
+
     return (
       <Card
         key={movie.id}
         style={styles.movieCard}
         onPress={() => {
-          navigator.navigate("VideoPlayer", { movie: movie });
+          navigator.navigate("VideoPlayer",{movie});
         }}
       >
-        <Card.Cover source={{uri:getImagesDownloadLink(movie.imageURL)}} style={styles.movieImage} />
+        <Card.Cover source={{uri: getImagesDownloadLink(movie.imageURL)}} style={styles.movieImage} />
         <Card.Content>
           <View style={styles.ratingContainer}>
             <Icon
@@ -63,16 +42,41 @@ const FanFavouritesSection = () => {
           </View>
           <Title style={styles.movieTitle}>{movie.title}</Title>
           <Paragraph style={styles.releaseYear}>
-            Release Year: {year.toString()}
+            Release Year: {year}
           </Paragraph>
         </Card.Content>
       </Card>
     );
   }
+ 
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View >
+          <Text style={styles.heading}>Coming Soon</Text>
+          <Text style={styles.description}>
+            These are coming soon movies
+          </Text>
+        </View>
+        <Button mode="text" textColor="dodgerblue" style={styles.seeAllButton}
+      onPress={()=>navigator.navigate("MovieViewScreen",{movies:comingSoonData,screenTitle:"Coming Soon"})}
+    >
+          SEE ALL
+        </Button>
+      </View>
+
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {comingSoonData.reverse().map((movie) => MovieCard(movie))}
+      </ScrollView>
+    </View>
+  );
+
+
 };
 
 const styles = StyleSheet.create({
   container: {
+    width: "100%",
     backgroundColor: "#333333",
     padding: 16,
   },
@@ -81,7 +85,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 16,
-    width: "100%",
   },
   heading: {
     fontSize: 24,
@@ -94,10 +97,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   description: {
-    fontSize: 12,
+   
+    fontSize: 14,
     color: "#CCCCCC",
   },
   seeAllButton: {
+   
     backgroundColor: "transparent",
     color: "dodgerblue",
   },
@@ -142,4 +147,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FanFavouritesSection;
+export default ComingSoonSection;

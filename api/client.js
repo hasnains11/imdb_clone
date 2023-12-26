@@ -4,9 +4,8 @@ import { create } from 'apisauce';
 
 const client = create({
     // for android virtual device to be able to see the api - ip address
-    baseURL: "http://localhost:52590/api/Movie/"
+    baseURL: "http://192.168.0.120/IM_DB_API/api/Movie/"
 });
-
 
 const { get } = client;
 

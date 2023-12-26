@@ -1,31 +1,36 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { colors } from '../../../assets/colors';
+import { getWatchlist } from '../../../storage/watchlistStorage';
+import { useWatchlistContext } from '../../../contexts/watchlistContext';
+import MovieCard from './MovieCard';
+import { useNavigation } from '@react-navigation/native';
 
-const WatchlistSection = ({ watchlist }) => {
+const WatchlistSection = () => {
+  const {watchlist}=useWatchlistContext();
+  const navigator=useNavigation();
+
+
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>From Your Watchlist</Text>
       {watchlist.length > 0 ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {watchlist.map((movie) => (
-            <View key={movie.id} style={styles.movieCard}>
-              {/* Display movie information as needed */}
-              <Text>{movie.title}</Text>
-            </View>
+          {watchlist.map((movie,index) => (
+             <MovieCard key={index} movie={movie} onPress={()=>{ navigator.navigate("VideoPlayer", { movie: movie })}}/>
           ))}
         </ScrollView>
       ) : (
         <View style={styles.content}>
           <Icon name="plus" size={32} color="dodgerblue" style={styles.ribbonIcon} />
-          <Text style={styles.message}>Your watchlist is empty</Text>
+          <Text style={styles.message}>Your watchlist is empty</Text>  
           <Text style={styles.subMessage}>
             Save shows and movies to keep track of what you want to watch
           </Text>
-          <TouchableOpacity style={styles.button}>
+          {/* <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>Add to Watchlist</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       )}
     </View>

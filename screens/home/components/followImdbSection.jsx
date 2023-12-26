@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
   },
+  
 });
 
 export default FollowImdbSection;

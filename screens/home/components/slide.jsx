@@ -1,17 +1,18 @@
 import React from "react";
 import { View, StyleSheet, Text, Image, Dimensions } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
+import { getImagesDownloadLink } from './../../../contexts/api';
 const { width, height } = Dimensions.get("window");
 
 const Slide = ({ item }) => {
   return (
     <View style={styles.cardView}>
       <Icon style={styles.playButton} name="play-circle-outline" size={50} color="#FFFFFF" />
-      <Image style={styles.image} source={item.poster} />
+      <Image style={styles.image} source={{uri:`http://192.168.0.120/IM_DB_API/images/${item.imageURL}`}} />
       <View style={styles.overlay}>
-        <Image source={item.poster} style={styles.smallPoster} />
+        <Image source={{uri:`http://192.168.0.120/IM_DB_API/images/${item.imageURL}`}} style={styles.smallPoster} />
         <View style={{backgroundColor: "rgba(0, 0, 0, 0.9)", flex:1,height:"82%" ,paddingLeft:7}}>
-          <Text style={styles.overlayDescription}>{item.title}</Text>
+          <Text style={styles.overlayDescription} ellipsizeMode="tail" numberOfLines={2}>{item.title}</Text>
           <Text style={styles.itemDescription}  numberOfLines={3} ellipsizeMode="tail" >
            {item.description}
           </Text>
@@ -88,6 +89,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 16,
+   
   },
 });
 

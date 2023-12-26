@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   View,
   Text,
@@ -13,50 +13,49 @@ import FanFavouritesSection from "./components/fanFavouritesSection";
 import WatchlistSection from "./components/watchListSection";
 import { colors } from "../../assets/colors";
 import FollowImdbSection from "./components/followImdbSection";
-import Button from "../../components/Button";
-import { useAuthContext } from "../../auth/context";
 import Carousel from "react-native-snap-carousel";
 import { useNavigation } from "@react-navigation/native";
-const movies = [
-  {
-    title: "Cosmopolis",
-    poster: require("./../../assets/images/movie1.jpg"),
-    trailerId: "your_youtube_trailer_id",
-    description: `Twenty-eight-year-old billionaire currency speculator Eric Packer rides slowly across Manhattan amid traffic jams, in his state-of-the-art luxury stretch limousine office, to his preferred barber. 
-    Various visitors discuss the meaning of life and inconsequential trivia. `,
-    cast: "Actor 1, Actor 2, Actor 3",
-  },
-  {
-    title: "Dog Days",
-    poster: require("./../../assets/images/movie2.jpg"),
-    trailerId: "your_youtube_trailer_id",
-    description: "A group of people living in Los Angeles find their paths interconnected because of their pets, which changes their lives forever.",
-    cast: "Actor 1, Actor 2, Actor 3",
-  },
-  {
-    title: "Hotel Transylvania",
-    poster: require("./../../assets/images/movie3.jpg"),
-    trailerId: "your_youtube_trailer_id",
-    description: `Hotel Transylvania is an American animated media franchise created by comedy writer Todd Durham and produced by Sony Pictures Animation. It consists
-     of four feature films, three short films, a flash-animated TV series, and several video games.`,
-    cast: "Actor 1, Actor 2, Actor 3",
-  },
-  // Add more movies as needed
-];
+import { useMovieContext } from "../../contexts/moviescontext";
+import ComingSoonSection from "./components/ComingSoonSection";
+
 // Functional component for the IMDb homepage
 const HomeScreen = () => {
-  const {logout}=useAuthContext();
-  const navigator = useNavigation();
+  // const { logout } = useAuthContext();
+    const navigator = useNavigation();
+  console.log("rendering home screen");
+  const moviecontext = useMovieContext();
+
+  const comingSoonMovies = moviecontext.comingSoonMovies;
+  const topBannerMovies = moviecontext.topBannerMovies;
+  const featuredMovies = moviecontext.featuredMovies;
+
+  // console.log("moviecontext",topBannerMovies[0]);
+  // console.log("featuredMovies",featuredMovies[0]);
+  // console.log("comingSoonMovies",comingSoonMovies[0]);
+ const top=topBannerMovies.map((movie) => {
+    return {
+      title: movie.title,
+      poster: movie.imageURL,
+      description: movie.description,
+      video: movie.videoURL,
+      cast: movie.cast,
+      rating: movie.rating,
+      genre: movie.genre,
+      id: movie.id,
+      trailerId: movie.trailerId,
+    }
+  });
+  // console.log(top[2]);
+  // console.log("")
+
   return (
     <ScrollView style={styles.container}>
-     <View style={{ ...styles.section, height: 320 }}> 
-         <Carousel
-          data={movies}
-          renderItem={({ item }) => (
+      <View style={{ ...styles.section, height: 320 }}>
+        <Carousel
+          data={topBannerMovies.slice(0, 3)}
+          renderItem={({ item,index }) => (
             <TouchableOpacity
-              onPress={() =>
-                navigator.navigate("Video", { movie: item })
-              }
+              onPress={() => navigator.navigate("VideoPlayer",{ movie: item})}
             >
               <Slide item={item} />
             </TouchableOpacity>
@@ -68,10 +67,13 @@ const HomeScreen = () => {
           autoplayInterval={4500}
           loop={true} // Set loop to true
         />
-      </View> 
+      </View>
 
       <View style={styles.section}>
         <FanFavouritesSection />
+      </View>
+      <View style={styles.section}>
+       <ComingSoonSection/>
       </View>
       {/* <Image
         source={require('../assets/images/imdb.jpg')}
@@ -79,14 +81,13 @@ const HomeScreen = () => {
       /> */}
 
       {/* Featured Movies or TV Shows */}
-  
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>What to Watch</Text>
         <WatchlistSection watchlist={[]} />
       </View>
       {/* Popular Movies or TV Shows */}
-    
+
       <View style={styles.section}>
         <FollowImdbSection />
       </View>
