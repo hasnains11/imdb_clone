@@ -14,9 +14,12 @@ import { colors } from "../../assets/colors";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import client from "../../api/client";
 import { getUser } from "../../auth/storage";
+import AddReviewButton from "./addReviewButton";
+import StarRating from "./ratings";
 
 const ReviewsList = ({ reviews, movieid }) => {
   const [user, setUser] = useState(null);
+  const [errors, setErrors] = useState(null);
   const fetchUser = async () => {
     const currentUser = await getUser();
     setUser(currentUser);
@@ -35,7 +38,13 @@ const ReviewsList = ({ reviews, movieid }) => {
   };
 
   const handleAddReview = async () => {
-    if (newReview.review && newReview.rate > 0) {
+    setErrors(null);
+    if (!(newReview.review!=="" && newReview.rate > 0 && newReview.rate <= 5)) {
+      setErrors("Please enter a valid review and rating(1-5)");
+      return;
+    }
+    setErrors(null);
+    {
       const review = {
         movieid,
         rate: newReview.rate,
@@ -44,12 +53,12 @@ const ReviewsList = ({ reviews, movieid }) => {
       };
 
       const res = await client.post("addMovieRate", review);
-      console.log(res,"res++++")
+      console.log(res, "res++++");
       if (!res.ok) return;
       setSubmittedReviews([
         ...submittedReviews,
         {
-          reviewId:  Math.random(),
+          reviewId: Math.random(),
           rate: newReview.rate,
           review: newReview.review,
           userId: user?.id,
@@ -73,6 +82,7 @@ const ReviewsList = ({ reviews, movieid }) => {
       </View>
       <View>
         <Text style={styles.rating}>{`Rating: ${item.rate}/5`}</Text>
+        <StarRating initialRating={item.rate} key={item.reviewId} />
       </View>
     </View>
   );
@@ -80,11 +90,7 @@ const ReviewsList = ({ reviews, movieid }) => {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.inputContainer}>
-        <TouchableOpacity onPress={toggleModal}>
-          <View style={styles.addButton}>
-            <Text style={styles.addButtonText}>Add Review</Text>
-          </View>
-        </TouchableOpacity>
+        <AddReviewButton onPress={toggleModal} />
         <Modal
           animationType="slide"
           transparent={true}
@@ -109,6 +115,7 @@ const ReviewsList = ({ reviews, movieid }) => {
                   setNewReview({ ...newReview, review: text })
                 }
               />
+
               <TextInput
                 style={styles.input}
                 placeholder="Rating (1-5)"
@@ -118,6 +125,11 @@ const ReviewsList = ({ reviews, movieid }) => {
                   setNewReview({ ...newReview, rate: parseInt(text) || 0 })
                 }
               />
+              {errors && (
+                <Text style={{ color: "red", textAlign: "center" ,fontSize:12,marginBottom:4}}>
+                  {errors}
+                </Text>
+              )}
               <TouchableOpacity
                 style={styles.addRButton}
                 onPress={handleAddReview}
@@ -128,12 +140,18 @@ const ReviewsList = ({ reviews, movieid }) => {
           </View>
         </Modal>
       </ScrollView>
-      <FlatList
-        data={[...reviews, ...submittedReviews]}
-        keyExtractor={(item) => item?.reviewId?.toString()}
-        renderItem={renderReviewItem}
-        contentContainerStyle={styles.listContainer}
-      />
+      {!(reviews.length == 0 && submittedReviews.length === 0) ? (
+        <FlatList
+          data={[...reviews, ...submittedReviews]}
+          keyExtractor={(item) => item?.reviewId?.toString()}
+          renderItem={renderReviewItem}
+          contentContainerStyle={styles.listContainer}
+        />
+      ) : (
+        <Text style={{ color: "white", textAlign: "center" }}>
+          No Reviews Yet!
+        </Text>
+      )}
     </View>
   );
 };
@@ -173,6 +191,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.yellow,
     fontWeight: "semibold",
+    marginBottom: 4,
   },
   inputContainer: {
     marginBottom: 8,

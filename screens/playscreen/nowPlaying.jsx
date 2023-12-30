@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { colors } from "../../assets/colors";
 import { getImagesDownloadLink } from "../../contexts/api";
@@ -19,6 +20,7 @@ import {
   removeFromWatchlist,
 } from "../../storage/watchlistStorage";
 import { useWatchlistContext } from "../../contexts/watchlistContext";
+import MovieCast from "./movieCast";
 
 const NowPlayingSection = ({ movie }) => {
   const [isWatchlist, setIsWatchlist] = React.useState(false);
@@ -31,14 +33,28 @@ const NowPlayingSection = ({ movie }) => {
 
   useEffect(() => {
     setIsWatchlist(false);
-    console.log("watchlist++", watchlist.some((item) => item.id === movie.id));
+ 
     if(watchlist.some((item) => item.id === movie.id)){
       setIsWatchlist(true);
     }
   }, [movie]);
+  const formatBreakTime = (breakTime) => {
+    const breakSegments = breakTime.split(',');
+    const formattedBreaks = breakSegments.map((segment, index) => {
+      const [breakName, startTime, endTime] = segment.trim().split('-');
+      const formattedBreak = `${breakName}: ${startTime.trim()} - ${endTime.trim()}`;
+      return formattedBreak;
+    });
+  
+    const formattedBreakTime = formattedBreaks.join(',');
+    return formattedBreakTime;
+  };
+
+  const formattedBreakTime = formatBreakTime(movie.breakTime);
 
   const renderMovieItem = ({ item, selected }) => (
     <TouchableOpacity style={styles.movieItemContainer} onPress={() => {}}>
+      
       <Image source={item.poster} style={styles.moviePoster} />
       <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
         <Text style={styles.movieTitle}>{item.title}</Text>
@@ -48,9 +64,7 @@ const NowPlayingSection = ({ movie }) => {
   );
 
   const handleAddToWatchList = () => {
-    console.log("add to watchlist");
     if (!isWatchlist) {
-      console.log("true");
       addMovieToWatchlist(movie)
       setIsWatchlist(true);
     } else {
@@ -59,12 +73,20 @@ const NowPlayingSection = ({ movie }) => {
     }
   };
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.headingContainer}>
         <Text style={{ ...styles.sectionTitle, color: "white" }}>
           Now Playing
         </Text>
       </View>
+      <View style={styles.movieBreakpointsContainer}>
+    {
+    formattedBreakTime.split(",").map((breakTime,index) => (
+    <View style={styles.timeCapsule} key={index}>
+      <Text style={styles.movieTime}>{breakTime}</Text>
+    </View>))
+    }
+  </View>
       <View
         style={{
           flexDirection: "row",
@@ -106,6 +128,14 @@ const NowPlayingSection = ({ movie }) => {
         </Text>
       </TouchableOpacity>
       <View style={styles.headingContainer}>
+        <Text style={styles.sectionTitle}>Cast</Text>
+      </View>
+      <MovieCast cast={movie?.actor} />
+      <View style={styles.headingContainer}>
+        <Text style={styles.sectionTitle}>Directors</Text>
+      </View>
+      <MovieCast cast={movie?.director} />
+      <View style={styles.headingContainer}>
         <Text style={styles.sectionTitle}>Reviews</Text>
       </View>
       <ReviewsList reviews={movie?.rates} movieid={movie?.id} />
@@ -116,11 +146,29 @@ const NowPlayingSection = ({ movie }) => {
         renderItem={({ item }) =>  <Text>{item.review}</Text> }
         contentContainerStyle={styles.movieListContainer}
       /> */}
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  movieBreakpointsContainer: {
+    flexDirection: "row",
+    justifyContent: "start",
+    margin: 2, 
+  },
+  timeCapsule: {
+    backgroundColor: "#5C5470",
+    borderRadius: 10, 
+    paddingVertical: 4,
+    paddingHorizontal: 8, 
+    marginHorizontal:4,
+    marginTop: 4,
+  },
+  movieTime: {
+    fontSize: 10, // Adjust the font size
+    fontWeight: "500", // Adjust the font weight
+    color: "black", // Adjust the color
+  },
   headingContainer: {
     backgroundColor: colors.darkGrey,
     padding: 4,
@@ -129,7 +177,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.darkBackground,
     marginVertical: 2,
-    height: "60%",
+    height: "50%",
   },
   sectionTitle: {
     color: colors.yellow,
