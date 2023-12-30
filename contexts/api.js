@@ -1,5 +1,5 @@
 import client from "../api/client";
-const IP_ADDRESS = "192.168.0.120"
+const IP_ADDRESS = "192.168.0.102"
 export const getTopBannerMovies = () => client.get("getTopBannerMovies");
 export const getFeaturedMovies = () => client.get("getFeaturedMovies");
 export const getCommingSoonMovies = () => client.get("getCommingSoonMovies");
