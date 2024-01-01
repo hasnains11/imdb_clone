@@ -58,7 +58,7 @@ const movieReducer = (state, action) => {
     }
 };
 
-const MovieContext = createContext();
+const MovieContext = createContext();   
 
 // Create a custom hook to use the MovieContext
 export const useMovieContext = () => {
