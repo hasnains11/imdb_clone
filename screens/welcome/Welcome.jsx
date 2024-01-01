@@ -20,6 +20,12 @@ const Welcome = () => {
         </View>
         <View style={styles.buttonContainer}>
           <Button
+            title="Admin Login"
+            color="yellow"
+            textStyle={{ color: "black",fontWeight:"bold" }}
+            onPress={() => navigator.navigate("Login",{role:"admin"})}
+          />
+          <Button
             title="Login"
             color="yellow"
             textStyle={{ color: "black",fontWeight:"bold" }}

@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import AppNavigator from "./navigation/AppNavigation";
 import { AuthContext } from "./auth/context";
 import { getUser } from "./auth/storage";
+import AdminNavigator from "./navigation/AdminNavigation";
 export default function App() {
   const [isReady, setIsReady] = useState(false);
   const [user, setUser] = useState(null);
@@ -29,7 +30,7 @@ export default function App() {
     <View style={styles.container}>
     <AuthContext.Provider value={{ user,setUser }}>
       <NavigationContainer>
-        {user==null ? <AuthNavigator /> : <AppNavigator />}
+        {user==null ? <AuthNavigator /> :user?.role?.toLowerCase() =="admin"?<AdminNavigator/>: <AppNavigator />}
       </NavigationContainer>
     </AuthContext.Provider>
     </View>

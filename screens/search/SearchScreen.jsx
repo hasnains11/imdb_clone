@@ -12,6 +12,9 @@ import { ActivityIndicator } from 'react-native-paper';
 const SearchScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [genreFilter, setGenreFilter] = useState('');
+  const [actorFilter, setActorFilter] = useState('');
+  const [directorFilter, setDirectorFilter] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
   
@@ -53,6 +56,29 @@ const SearchScreen = () => {
           onChangeText={(text) => setSearchQuery(text)}
           onSubmitEditing={handleSearch}
         />
+      </View>
+      <View style={styles.filtersContainer}>
+        <TextInput
+          style={styles.filterInput}
+          placeholder="Genre"
+          value={genreFilter}
+          onChangeText={(text) => setGenreFilter(text)}
+        />
+        <TextInput
+          style={styles.filterInput}
+          placeholder="Actor"
+          value={actorFilter}
+          onChangeText={(text) => setActorFilter(text)}
+        />
+        <TextInput
+          style={styles.filterInput}
+          placeholder="Director"
+          value={directorFilter}
+          onChangeText={(text) => setDirectorFilter(text)}
+        />
+        <TouchableOpacity style={styles.filterButton} onPress={handleSearch}>
+          <Text style={styles.filterButtonText}>Apply Filters</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.headingContainer}>
       <Icon name="movie" size={24} color={colors.yellow} style={styles.movieIcon} />
@@ -175,7 +201,29 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-around',
   },
-  // Add more styles as needed
+  filtersContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  filterInput: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 10,
+    marginRight: 10,
+  },
+  filterButton: {
+    backgroundColor: colors.yellow,
+    borderRadius: 8,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filterButtonText: {
+    color: 'black',
+    fontWeight: 'bold',
+  },
 });
 
 // Export the component for use in the app

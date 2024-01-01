@@ -21,6 +21,7 @@ import {
 } from "../../storage/watchlistStorage";
 import { useWatchlistContext } from "../../contexts/watchlistContext";
 import MovieCast from "./movieCast";
+import StarRating from "./ratings";
 
 const NowPlayingSection = ({ movie }) => {
   const [isWatchlist, setIsWatchlist] = React.useState(false);
@@ -109,6 +110,7 @@ const NowPlayingSection = ({ movie }) => {
           {/* <Text style={{color:"white"}}>{nowPlayingData[0].description}</Text> */}
         </View>
       </View>
+      <StarRating size={30}/>
       <TouchableOpacity onPress={handleAddToWatchList}>
         <Text
           style={{

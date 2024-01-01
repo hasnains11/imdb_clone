@@ -82,7 +82,7 @@ const ReviewsList = ({ reviews, movieid }) => {
       </View>
       <View>
         <Text style={styles.rating}>{`Rating: ${item.rate}/5`}</Text>
-        <StarRating initialRating={item.rate} key={item.reviewId} />
+        <StarRating initialRating={item.rate} key={item.reviewId} size={12} />
       </View>
     </View>
   );
