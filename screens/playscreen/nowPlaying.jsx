@@ -107,7 +107,7 @@ const NowPlayingSection = ({ movie }) => {
           }}
         >
           <Text style={{ color: "white" }}>{movie?.title}</Text>
-          {/* <Text style={{color:"white"}}>{nowPlayingData[0].description}</Text> */}
+          <Text style={{color:"white"}}>{movie?.description}</Text>
         </View>
       </View>
       <StarRating size={30}/>
