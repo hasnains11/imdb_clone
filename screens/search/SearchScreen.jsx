@@ -55,9 +55,13 @@ const SearchScreen = () => {
       setIsLoading(true);
 
       // Filter movies based on the search query
-      let filteredMovies = allMovies.filter((movie) =>
+      let filteredMovies=allMovies;
+      if(searchQuery && searchQuery !== "") {
+        filteredMovies = allMovies.filter((movie) =>
         movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+        );
+      }
+
       console.log(filteredMovies,"filteredMovies+++")
       // Apply additional filters based on selectedGenre, selectedAgeLimit, and selectedReleaseDate
       if (selectedGenre) {
@@ -76,6 +80,9 @@ const SearchScreen = () => {
         filteredMovies = filteredMovies.filter(
           (movie) => movie.releaseDate.split("/")[2] === selectedReleaseDate
         );
+      }
+      if(!searchQuery && !selectedAgeLimit && !selectedGenre && !selectedReleaseDate){
+        filteredMovies=[];
       }
       console.log(filteredMovies,"filteredMovies_____")
       setSearchResults(filteredMovies);
