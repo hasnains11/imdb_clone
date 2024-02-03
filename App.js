@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { Video, ResizeMode } from "expo-av";
@@ -14,6 +15,7 @@ import AppNavigator from "./navigation/AppNavigation";
 import { AuthContext } from "./auth/context";
 import { getUser } from "./auth/storage";
 import AdminNavigator from "./navigation/AdminNavigation";
+import { Provider } from "react-native-paper";
 export default function App() {
   const [isReady, setIsReady] = useState(false);
   const [user, setUser] = useState(null);
@@ -28,11 +30,20 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-    <AuthContext.Provider value={{ user,setUser }}>
-      <NavigationContainer>
-        {user==null ? <AuthNavigator /> :user?.role?.toLowerCase() =="admin"?<AdminNavigator/>: <AppNavigator />}
-      </NavigationContainer>
-    </AuthContext.Provider>
+      <Provider>
+        <AuthContext.Provider value={{ user, setUser }}>
+          <NavigationContainer>
+          
+            {user == null ? (
+              <AuthNavigator />
+            ) : user?.role?.toLowerCase() == "admin" ? (
+              <AdminNavigator />
+            ) : (
+              <AppNavigator />
+            )}
+          </NavigationContainer>
+        </AuthContext.Provider>
+      </Provider>
     </View>
   );
 }

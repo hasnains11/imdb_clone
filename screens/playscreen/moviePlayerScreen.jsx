@@ -11,6 +11,8 @@ const MoviePlayerScreen = ({ route }) => {
   console.log("route", route);
   const movie = route?.params?.movie;
   // Sample video source
+  console.log("MoviePlayerScreen");
+  
   if(!movie) return <WelcomeScreen/>
   const videoSource = movie
     ? { uri: getVideoDownloadLink(movie.videoURL) }

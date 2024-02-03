@@ -33,7 +33,7 @@ const FanFavouritesSection = () => {
     </View>
   );
 
-  function MovieCard(movie) {
+ function MovieCard(movie) {
    
     const year = movie.releaseDate.split("/")[2];
     let ratings=0;

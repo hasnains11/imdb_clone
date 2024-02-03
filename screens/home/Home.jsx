@@ -17,17 +17,18 @@ import Carousel from "react-native-snap-carousel";
 import { useNavigation } from "@react-navigation/native";
 import { useMovieContext } from "../../contexts/moviescontext";
 import ComingSoonSection from "./components/ComingSoonSection";
+import { useAuthContext } from "../../auth/context";
 
 // Functional component for the IMDb homepage
 const HomeScreen = () => {
   // const { logout } = useAuthContext();
     const navigator = useNavigation();
+    const {user}=useAuthContext();
+    console.log("user",user);
   console.log("rendering home screen");
   const moviecontext = useMovieContext();
 
-  const comingSoonMovies = moviecontext.comingSoonMovies;
   const topBannerMovies = moviecontext.topBannerMovies;
-  const featuredMovies = moviecontext.featuredMovies;
 
   // console.log("moviecontext",topBannerMovies[0]);
   // console.log("featuredMovies",featuredMovies[0]);

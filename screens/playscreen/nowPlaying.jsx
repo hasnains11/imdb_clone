@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
+
 import {
   View,
   Text,
@@ -8,37 +9,35 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+
 import { colors } from "../../assets/colors";
 import { getImagesDownloadLink } from "../../contexts/api";
+
 import Icon from "react-native-vector-icons/FontAwesome";
 import ReviewsList from "./reviewList";
-import { addMovieToPlaylist } from "../../storage/playlistStorage";
-import {
-  addToWatchlist,
-  clearWatchlist,
-  isInWatchlist,
-  removeFromWatchlist,
-} from "../../storage/watchlistStorage";
+
 import { useWatchlistContext } from "../../contexts/watchlistContext";
 import MovieCast from "./movieCast";
+
 import StarRating from "./ratings";
+import { Modal, List, Button, Portal } from "react-native-paper";
+
+import { useAuthContext } from "../../auth/context";
 
 const NowPlayingSection = ({ movie }) => {
-  const [isWatchlist, setIsWatchlist] = React.useState(false);
+
+  const [isWatchlist, setIsWatchlist] = useState(false);
+  const [isWatchlistModalVisible, setWatchlistModalVisible] = useState(false);
+
+  const [selectedWatchlist, setSelectedWatchlist] = useState(null);
+
+  const { user } = useAuthContext();
+  
   const {
-    watchlist,
+    watchlists,
     addMovieToWatchlist,
-    removeMovieFromWatchlist,
   } = useWatchlistContext();
 
-
-  useEffect(() => {
-    setIsWatchlist(false);
- 
-    if(watchlist.some((item) => item.id === movie.id)){
-      setIsWatchlist(true);
-    }
-  }, [movie]);
   const formatBreakTime = (breakTime) => {
     const breakSegments = breakTime.split(',');
     const formattedBreaks = breakSegments.map((segment, index) => {
@@ -55,7 +54,6 @@ const NowPlayingSection = ({ movie }) => {
 
   const renderMovieItem = ({ item, selected }) => (
     <TouchableOpacity style={styles.movieItemContainer} onPress={() => {}}>
-      
       <Image source={item.poster} style={styles.moviePoster} />
       <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
         <Text style={styles.movieTitle}>{item.title}</Text>
@@ -65,14 +63,16 @@ const NowPlayingSection = ({ movie }) => {
   );
 
   const handleAddToWatchList = () => {
-    if (!isWatchlist) {
-      addMovieToWatchlist(movie)
-      setIsWatchlist(true);
-    } else {
-      removeMovieFromWatchlist(movie.id);
-      setIsWatchlist(false);
-    }
+    setWatchlistModalVisible(true);
+  
   };
+
+  const handleWatchlistSelection = (watchlist) => {
+    setWatchlistModalVisible(false);
+    setSelectedWatchlist(watchlist);
+    addMovieToWatchlist(user.id,movie, watchlist.id);
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headingContainer}>
@@ -111,7 +111,7 @@ const NowPlayingSection = ({ movie }) => {
         </View>
       </View>
       <StarRating size={30}/>
-      <TouchableOpacity onPress={handleAddToWatchList}>
+      <TouchableOpacity onPress={()=>setWatchlistModalVisible(true)}>
         <Text
           style={{
             backgroundColor: colors.yellow,
@@ -148,6 +148,35 @@ const NowPlayingSection = ({ movie }) => {
         renderItem={({ item }) =>  <Text>{item.review}</Text> }
         contentContainerStyle={styles.movieListContainer}
       /> */}
+     <Portal>
+        <Modal
+          visible={isWatchlistModalVisible}
+          onDismiss={() => setWatchlistModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <List.Section>
+              <List.Subheader style={styles.subheader}>
+                Select Watchlist
+              </List.Subheader>
+              {watchlists.map((watchlist) => (
+                <List.Item
+                  key={watchlist.id.toString()}
+                  title={watchlist.title}
+                  onPress={() => handleWatchlistSelection(watchlist)}
+                  style={styles.listItem}
+                />
+              ))}
+            </List.Section>
+            <Button
+              mode="contained"
+              onPress={() => setWatchlistModalVisible(false)}
+              style={styles.closeButton}
+            >
+              Close
+            </Button>
+          </View>
+        </Modal>
+      </Portal>
     </ScrollView>
   );
 };
@@ -212,6 +241,36 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 14,
     textAlign: "center",
+  },
+  button: {
+    backgroundColor: '#FFD700',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 16,
+    fontWeight: 'bold',
+    margin: 10,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  icon: {
+    marginHorizontal: 8,
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+  },
+  subheader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  listItem: {
+    marginVertical: 8,
+  },
+  closeButton: {
+    marginTop: 20,
   },
 });
 

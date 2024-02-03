@@ -1,15 +1,19 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet,Image } from 'react-native';
 import { colors } from '../../assets/colors';
+import { getImagesDownloadLink, getUserImageLink } from '../../contexts/api';
 
 const MovieCast = ({ cast }) => {
-  const renderActorItem = ({ item }) => (
-    <View style={styles.actorItem}>
-      <View style={styles.actorCapsule}>
-        <Text style={styles.actorName}>{item.name}</Text>
-      </View>
+  const ActorCard = ( {item} ) => {
+    console.log(getUserImageLink(item.imageURL),"item++++++");
+    return (<View style={styles.cardContainer}>
+      <Image source={{uri:getUserImageLink(item.imageURL) }} style={styles.actorImage} />
+      <Text style={styles.actorName}>{item.name}</Text>
+      <Text style={styles.actorDetails}>{item.nationality}, {item.gender}</Text>
+      <Text style={styles.actorDetails}>DOB: {item.dob}</Text>
     </View>
-  );
+  )
+}
     if(cast.length===0) return (<View>
         <Text style={{color:colors.white,textAlign:"center",margin:2}}>No cast found</Text>
     </View>)
@@ -18,7 +22,7 @@ const MovieCast = ({ cast }) => {
       <FlatList
         data={cast}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={renderActorItem}
+        renderItem={ActorCard}
         horizontal
         showsHorizontalScrollIndicator={false}
       />
@@ -36,21 +40,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5,
   },
-  actorItem: {
-    marginRight: 6,
-    alignItems: 'center',
+  actorImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 8,
   },
-  actorCapsule: {
-    backgroundColor: colors.accentColor ,
-    opacity:0.84, // Adjust the background color of the capsule
-    borderRadius: 20, // Adjust the border radius for a rounded appearance
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    marginVertical: 5,
-},
   actorName: {
-    color: '#ffffff', // Adjust the text color
+    color: '#fff', // White text color
+    fontSize: 16,
     fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  actorDetails: {
+    color: '#ccc', // Light gray text color
     fontSize: 12,
   },
 });
